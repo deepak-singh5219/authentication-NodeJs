@@ -7,4 +7,6 @@ const bcrypt = require('bcryptjs');
 
 app.use(express.json());
 
-
+app.get('/', (req,res) => {
+    res.send('on home route');
+})
