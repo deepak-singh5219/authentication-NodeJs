@@ -1,4 +1,4 @@
-
+require('./config/db').connect();
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
@@ -8,22 +8,22 @@ const jwt = require('jsonwebtoken');
 
 app.use(express.json());
 
-app.get('/', (req,res) => {
-    res.send('on home route');
+app.get("/", (req,res)=>{
+    res.send("<h1>Home Route</h1>")
 })
 
 app.post('/register', async (req,res) => {
 
     try {
         
-        const {firstName, lastName, email, password} = req.body();
+        const {firstName, lastName, email, password} = req.body;
 
         if(!(firstName && lastName && email && password)){
             console.log('All fields are required!');
-            res.status(400).send('Missing Information');
+            res.status(400).send('All fields are required!');
         }
     
-        const existUser = User.findOne({email});
+        const existUser = await User.findOne({email});
         if(existUser){
             res.status(401).send('User already exists');
         }
@@ -65,7 +65,7 @@ app.post('/register', async (req,res) => {
 app.post('/login', async(req,res) => {
 
     try {
-        const {email, password} = req.body();
+        const {email, password} = req.body;
 
         if(!(email && password)){
             res.status('401').send('missing information');
@@ -100,6 +100,7 @@ app.post('/login', async(req,res) => {
 
             res.status(200).cookie("token", token, options).json({
                 success: true,
+                user
             });
             
         }
@@ -113,4 +114,5 @@ app.post('/login', async(req,res) => {
 })
 
 
+module.exports = app;
 
