@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const MDB_URL = "mongodb://127.0.0.1:27017/auth";
+const {MONGODB_URL} = process.env;
 
 exports.connect = () => {
     mongoose.connect(MDB_URL,{
