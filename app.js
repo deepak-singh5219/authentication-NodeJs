@@ -13,6 +13,7 @@ app.get("/", (req,res)=>{
     res.send("<h1>Home Route</h1>")
 })
 
+// register route
 app.post('/register', async (req,res) => {
 
     try {
@@ -21,12 +22,17 @@ app.post('/register', async (req,res) => {
 
         if(!(firstName && lastName && email && password)){
             console.log('All fields are required!');
-            res.status(400).send('All fields are required!');
+            res.status(400).json({
+                "message":"insufficient data"
+            });
         }
     
         const existUser = await User.findOne({email});
         if(existUser){
-            res.status(401).send('User already exists');
+            res.status(401).json({
+                email,
+                "message":"already exist"
+            })
         }
     
         const salt = await bcrypt.genSalt(10);
@@ -63,19 +69,21 @@ app.post('/register', async (req,res) => {
  
 });
 
+// login route
 app.post('/login', async(req,res) => {
 
     try {
         const {email, password} = req.body;
 
         if(!(email && password)){
-            res.status('401').send('missing information');
-            console.log('information missing');
+            res.status('401').json({
+                "message":"insufficient data"
+            });
         }
 
         const user = await User.findOne({email});
         if(!user){
-            res.status(401).send("User not found");
+            res.status(401).json({"message":"does not exist"});
         }
 
         // matching the password
@@ -114,6 +122,11 @@ app.post('/login', async(req,res) => {
 
 })
 
+// dashboard
+app.get('/dashboard', auth, async(req,res) => {
+    res.status(200).json(req.user);
+
+})
 
 module.exports = app;
 
