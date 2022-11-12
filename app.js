@@ -22,15 +22,18 @@ app.post('/register', async (req,res) => {
 
     try {
         
+        // fetching data 
         const {firstName, lastName, email, password} = req.body;
 
+         // validating data
         if(!(firstName && lastName && email && password)){
-            console.log('All fields are required!');
+            
             res.status(400).json({
                 "message":"insufficient data"
             });
         }
     
+        // checking if user already exists
         const existUser = await User.findOne({email});
         if(existUser){
             res.status(401).json({
@@ -38,10 +41,12 @@ app.post('/register', async (req,res) => {
                 "message":"already exist"
             })
         }
-    
+        
+        // encrypting the password
         const salt = await bcrypt.genSalt(10);
         const myEncrypPassword = await bcrypt.hash(password,salt);
     
+        // creating user in database
         const user = await User.create({
             firstName,
             lastName,
