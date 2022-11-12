@@ -1,11 +1,11 @@
-
+const jwt = require("jsonwebtoken");
 
 const auth = (req,res,next) => {
     console.log(req.cookies);
     const {token} = req.cookies;
 
     if(!token) {
-        return res.status(403).json("token missing");
+        return res.status(403).json({"token":"missing"});
     }
 
     // verify and decode token
@@ -22,3 +22,5 @@ const auth = (req,res,next) => {
     return next();
 
 }
+
+module.exports = auth;

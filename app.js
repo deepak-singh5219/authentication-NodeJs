@@ -6,8 +6,12 @@ const app = express();
 const User = require('./model/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 
+const auth = require('./middleware/auth');
 app.use(express.json());
+app.use(cookieParser());
+
 
 app.get("/", (req,res)=>{
     res.send("<h1>Home Route</h1>")
@@ -114,7 +118,9 @@ app.post('/login', async(req,res) => {
             
         }
 
-        res.status(400).send("email or password incorrect");
+        res.status(401).json({
+            "message":"invalid credentials"
+        });
 
     } catch (error) {
       console.log(error);
@@ -124,7 +130,15 @@ app.post('/login', async(req,res) => {
 
 // dashboard
 app.get('/dashboard', auth, async(req,res) => {
-    res.status(200).json(req.user);
+
+    const email = req.user.email;
+    const user = await User.findOne({email});
+
+    user.password = undefined;
+    res.status(200).json({
+        "message":"Welcome to Dashboard",
+        "user": user
+    });
 
 })
 
