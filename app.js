@@ -130,15 +130,23 @@ app.post('/login', async(req,res) => {
 
 // dashboard
 app.get('/dashboard', auth, async(req,res) => {
-
-    const email = req.user.email;
-    const user = await User.findOne({email});
-
-    user.password = undefined;
     res.status(200).json({
         "message":"Welcome to Dashboard",
-        "user": user
+        "user": req.user
     });
+
+})
+
+app.get('/profile', auth, async(req,res) => {
+    // extracting email of logged in user
+    const {email} = req.user;
+    // finding user in database
+    const user = await User.findOne({email});
+    user.password = undefined;
+    res.status(200).json({
+        "message":"User Profile",
+        "userDetails":user
+    })
 
 })
 
